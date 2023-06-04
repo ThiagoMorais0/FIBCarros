@@ -179,8 +179,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private void desenhaBackground(Graphics g) {
         if (!gameOver) {
             long currentTime = System.currentTimeMillis();
-            int roadY = (int) (ALTURA_ESTRADA - ((currentTime / 7) % ALTURA_ESTRADA)); // Invertendo o cálculo de roadY
-            int startOffset = -roadY;
+            int YEstrada = (int) (ALTURA_ESTRADA - ((currentTime / 7) % ALTURA_ESTRADA));
+            int startOffset = -YEstrada;
 
             while (startOffset < ALTURA_PAINEL) {
                 // Desenha a imagem de fundo repetidamente para criar a animação de movimento para baixo
@@ -188,7 +188,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 startOffset += ALTURA_ESTRADA;
             }
 
-            if (roadY > 0) {
+            if (YEstrada > 0) {
                 // Desenha a imagem de fundo novamente para preencher a parte inferior da tela
                 g.drawImage(backgroundImage, 0, startOffset - ALTURA_ESTRADA, null);
             }
