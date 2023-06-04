@@ -17,7 +17,6 @@ import java.util.List;
 import javax.swing.Timer;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
-    // Definição de constantes
     private static final int LARGURA_PAINEL = 800;
     private static final int ALTURA_PAINEL = 600;
     private static final int LARGURA_CARRO = 50;
@@ -36,7 +35,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private boolean checkPoint50 = true;
     private boolean checkPoint100 = true;
     private BufferedImage backgroundImage;
-    private Timer timer;
     private Carro carro;
     private List<Obstaculo> obstaculos;
     private int pontuacao;
@@ -48,7 +46,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         setFocusable(true);
         addKeyListener(this);
         initGame();
-        timer = new Timer(16, this);
+        Timer timer = new Timer(16, this);
         timer.start();
         gameOver = false;
     }
