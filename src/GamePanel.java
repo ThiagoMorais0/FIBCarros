@@ -28,8 +28,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private static final int LARGURA_FAIXA_ESTRADA = 5;
     private static final int X_INICIAL_CARRO = (LARGURA_PAINEL - LARGURA_CARRO) / 2;
     private static final int Y_INICIAL_CARRO = ALTURA_PAINEL - ALTURA_CARRO - 10;
-    private static double VELOCIDADE_OPONENTE = 5.0;
-
+    private static double velocidadeOponente = 5.0;
     private boolean checkPoint10 = true;
     private boolean checkPoint20 = true;
     private boolean checkPoint50 = true;
@@ -66,8 +65,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     private void criarObstaculo() {
         if (obstaculos.size() < 5) {
-            int laneX = gerarPosicaoAleatoria();
-            Obstaculo obstaculo = new Obstaculo(laneX, -ALTURA_CARRO);
+            int posX = gerarPosicaoAleatoria();
+            Obstaculo obstaculo = new Obstaculo(posX, -ALTURA_CARRO);
 
             // Verifica se há colisão com outros carros inimigos existentes
             boolean collides = false;
@@ -80,8 +79,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
             // Se houver colisão, escolhe um novo caminho para o carro inimigo
             while (collides) {
-                laneX = gerarPosicaoAleatoria();
-                obstaculo.setX(laneX);
+                posX = gerarPosicaoAleatoria();
+                obstaculo.setX(posX);
                 collides = false;
                 for (Obstaculo existingObstaculo : obstaculos) {
                     if (obstaculo.testaColisao(existingObstaculo)) {
@@ -96,14 +95,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     private int gerarPosicaoAleatoria() {
-        int lane = (int) (Math.random() * (LARGURA_ESTRADA / LARGURA_FAIXA_ESTRADA));
-        int laneX = X_INICIAL_ESTRADA + lane * LARGURA_FAIXA_ESTRADA;
+        int pos = (int) (Math.random() * (LARGURA_ESTRADA / LARGURA_FAIXA_ESTRADA));
+        int posX = X_INICIAL_ESTRADA + pos * LARGURA_FAIXA_ESTRADA;
 
-        if (laneX + LARGURA_CARRO > X_INICIAL_ESTRADA + LARGURA_ESTRADA) {
-            laneX = X_INICIAL_ESTRADA + LARGURA_ESTRADA - LARGURA_CARRO;
+        if (posX + LARGURA_CARRO > X_INICIAL_ESTRADA + LARGURA_ESTRADA) {
+            posX = X_INICIAL_ESTRADA + LARGURA_ESTRADA - LARGURA_CARRO;
         }
 
-        return laneX;
+        return posX;
     }
 
     private void update() {
@@ -111,21 +110,21 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             carro.move();
 
             if (pontuacao == 10 && checkPoint10) {
-                VELOCIDADE_OPONENTE += 1;
+                velocidadeOponente += 1;
                 checkPoint10 = false;
             }
 
             if (pontuacao == 20 && checkPoint20) {
-                VELOCIDADE_OPONENTE += 1;
+                velocidadeOponente += 1;
                 checkPoint20 = false;
             }
 
             if (pontuacao == 50 && checkPoint50) {
-                VELOCIDADE_OPONENTE += 1.5;
+                velocidadeOponente += 1.5;
                 checkPoint50 = false;
             }
             if (pontuacao == 100 && checkPoint100) {
-                VELOCIDADE_OPONENTE += 2;
+                velocidadeOponente += 2;
                 checkPoint100 = false;
             }
 
@@ -136,7 +135,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             }
 
             for (Obstaculo obstaculo : obstaculos) {
-                obstaculo.setY(obstaculo.getY() + (int) VELOCIDADE_OPONENTE);
+                obstaculo.setY(obstaculo.getY() + (int) velocidadeOponente);
 
                 if (obstaculo.getY() > ALTURA_PAINEL) {
                     obstaculo.setY(-ALTURA_CARRO);
@@ -215,10 +214,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         g.setFont(new Font("Arial", Font.BOLD, 24));
         FontMetrics fontMetrics = g.getFontMetrics();
         String gameOverText = "Bateu! Pressione espaço para reiniciar. Seu score: " + pontuacao;
-        int textWidth = fontMetrics.stringWidth(gameOverText);
-        int textHeight = fontMetrics.getHeight();
-        int x = (LARGURA_PAINEL - textWidth) / 2;
-        int y = (ALTURA_PAINEL - textHeight) / 2;
+        int larguraTexto = fontMetrics.stringWidth(gameOverText);
+        int alturaTexto = fontMetrics.getHeight();
+        int x = (LARGURA_PAINEL - larguraTexto) / 2;
+        int y = (ALTURA_PAINEL - alturaTexto) / 2;
         g.drawString(gameOverText, x, y);
     }
 
