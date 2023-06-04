@@ -43,7 +43,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private boolean gameOver;
 
     public GamePanel() {
-        // Configuração do painel do jogo
         setPreferredSize(new Dimension(LARGURA_PAINEL, ALTURA_PAINEL));
         setBackground(Color.WHITE);
         setFocusable(true);
@@ -55,13 +54,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     private void initGame() {
-        // Inicialização do jogo
         carro = new Carro(X_INICIAL_CARRO, Y_INICIAL_CARRO);
         obstaculos = new ArrayList<>();
         pontuacao = 0;
 
         try {
-            // Carrega a imagem de fundo do jogo
             InputStream backgroundInputStream = getClass().getResourceAsStream("/imgs/background.png");
             backgroundImage = ImageIO.read(backgroundInputStream);
         } catch (IOException e) {
@@ -70,7 +67,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     private void criarObstaculo() {
-        // Cria um obstáculo (carro inimigo)
         if (obstaculos.size() < 5) {
             int laneX = gerarPosicaoAleatoria();
             Obstaculo obstaculo = new Obstaculo(laneX, -ALTURA_CARRO);
@@ -102,11 +98,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     private int gerarPosicaoAleatoria() {
-        // Gera uma posição aleatória para o obstáculo (carro inimigo)
         int lane = (int) (Math.random() * (LARGURA_ESTRADA / LARGURA_FAIXA_ESTRADA));
         int laneX = X_INICIAL_ESTRADA + lane * LARGURA_FAIXA_ESTRADA;
 
-        // Ajusta a posição para que o carro inimigo esteja dentro dos limites da estrada
         if (laneX + LARGURA_CARRO > X_INICIAL_ESTRADA + LARGURA_ESTRADA) {
             laneX = X_INICIAL_ESTRADA + LARGURA_ESTRADA - LARGURA_CARRO;
         }
@@ -115,7 +109,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     private void update() {
-        // Atualiza a lógica do jogo
         if (!gameOver) {
             carro.move();
 
@@ -148,7 +141,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 obstaculo.setY(obstaculo.getY() + (int) VELOCIDADE_OPONENTE);
 
                 if (obstaculo.getY() > ALTURA_PAINEL) {
-                    // Se o obstáculo passar pela parte inferior da tela, reposiciona-o e incrementa a pontuação
                     obstaculo.setY(-ALTURA_CARRO);
                     obstaculo.setX(gerarPosicaoAleatoria());
                     pontuacao++;
