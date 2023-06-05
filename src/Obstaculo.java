@@ -17,45 +17,73 @@ public class Obstaculo {
         this.y = y;
 
         Random random = new Random();
-        int numeroAleatorio = random.nextInt(5);
-        if (numeroAleatorio == 0) {
-            try {
-                InputStream inputStream = getClass().getResourceAsStream("/imgs/oponente1.png");
-                carImage = ImageIO.read(inputStream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else if (numeroAleatorio == 1) {
-            try {
-                InputStream inputStream = getClass().getResourceAsStream("/imgs/oponente2.png");
-                carImage = ImageIO.read(inputStream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else if (numeroAleatorio == 2) {
-            try {
-                InputStream inputStream = getClass().getResourceAsStream("/imgs/oponente3.png");
-                carImage = ImageIO.read(inputStream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else if (numeroAleatorio == 3) {
-            try {
-                InputStream inputStream = getClass().getResourceAsStream("/imgs/oponente4.png");
-                carImage = ImageIO.read(inputStream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            try {
-                InputStream inputStream = getClass().getResourceAsStream("/imgs/oponente5.png");
-                carImage = ImageIO.read(inputStream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        int numeroAleatorio = random.nextInt(9);
+        switch (numeroAleatorio){
+            case 0:
+                try {
+                    InputStream inputStream = getClass().getResourceAsStream("/imgs/oponente1.png");
+                    carImage = ImageIO.read(inputStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } break;
+            case 1:
+                try {
+                    InputStream inputStream = getClass().getResourceAsStream("/imgs/oponente2.png");
+                    carImage = ImageIO.read(inputStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } break;
+            case 2:
+                try {
+                    InputStream inputStream = getClass().getResourceAsStream("/imgs/oponente3.png");
+                    carImage = ImageIO.read(inputStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } break;
+            case 3:
+                try {
+                    InputStream inputStream = getClass().getResourceAsStream("/imgs/oponente4.png");
+                    carImage = ImageIO.read(inputStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } break;
+            case 4:
+                try {
+                    InputStream inputStream = getClass().getResourceAsStream("/imgs/oponente5.png");
+                    carImage = ImageIO.read(inputStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } break;
+            case 5:
+                try {
+                    InputStream inputStream = getClass().getResourceAsStream("/imgs/oponente6.png");
+                    carImage = ImageIO.read(inputStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } break;
+            case 6:
+                try {
+                    InputStream inputStream = getClass().getResourceAsStream("/imgs/oponente7.png");
+                    carImage = ImageIO.read(inputStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } break;
+            case 7:
+                try {
+                    InputStream inputStream = getClass().getResourceAsStream("/imgs/oponente8.png");
+                    carImage = ImageIO.read(inputStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } break;
+            case 8:
+                try {
+                    InputStream inputStream = getClass().getResourceAsStream("/imgs/oponente9.png");
+                    carImage = ImageIO.read(inputStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } break;
+
         }
-
-
     }
 
     public int getX() {
@@ -87,9 +115,9 @@ public class Obstaculo {
     }
 
     public boolean testaColisao(Obstaculo outro) {
-        return x + LARGURA > outro.getX() &&
-                x < outro.getX() + outro.getLARGURA() &&
-                y < outro.getY() + outro.getALTURA() &&
-                y + ALTURA > outro.getY();
+        return x + LARGURA >= outro.getX() + 10 &&
+                x <= outro.getX()  + 10 + outro.getLARGURA() &&
+                y <= outro.getY()  + 10 + outro.getALTURA() &&
+                y + ALTURA >= outro.getY()  + 10;
     }
 }

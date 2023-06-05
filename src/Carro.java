@@ -17,7 +17,7 @@ public class Carro {
 
     public Carro(int x, int y) {
         this.x = x;
-        this.y = y - 30;
+        this.y = y - 50;
         this.movendoParaEsquerda = false;
         this.movendoParaDireita = false;
 

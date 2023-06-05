@@ -1,4 +1,8 @@
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -12,11 +16,13 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Timer;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
+    private static int record = 0;
     private static final int LARGURA_PAINEL = 800;
     private static final int ALTURA_PAINEL = 600;
     private static final int LARGURA_CARRO = 50;
@@ -38,6 +44,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private List<Obstaculo> obstaculos;
     private int pontuacao;
     private boolean gameOver;
+    private boolean iniciado;
+    private Clip musica;
+    private Clip beep;
 
     public GamePanel() {
         setPreferredSize(new Dimension(LARGURA_PAINEL, ALTURA_PAINEL));
@@ -48,6 +57,28 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         Timer timer = new Timer(16, this);
         timer.start();
         gameOver = false;
+        iniciado = true;
+        record = 0;
+
+        try {
+            URL musicURL = getClass().getResource("/audio/song.wav");
+            musica = AudioSystem.getClip();
+            musica.open(AudioSystem.getAudioInputStream(musicURL));
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            URL beepURL = getClass().getResource("/audio/beep.wav");
+            beep = AudioSystem.getClip();
+            beep.open(AudioSystem.getAudioInputStream(beepURL));
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
+
+        if (musica != null) {
+            musica.loop(Clip.LOOP_CONTINUOUSLY);
+        }
     }
 
     private void initGame() {
@@ -61,38 +92,35 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
     }
 
     private void criarObstaculo() {
-        if (obstaculos.size() < 5) {
+        if (obstaculos.size() < 5 && !iniciado) {
             int posX = gerarPosicaoAleatoria();
             Obstaculo obstaculo = new Obstaculo(posX, -ALTURA_CARRO);
 
-            // Verifica se há colisão com outros carros inimigos existentes
-            boolean collides = false;
-            for (Obstaculo existingObstaculo : obstaculos) {
-                if (obstaculo.testaColisao(existingObstaculo)) {
-                    collides = true;
-                    break;
-                }
-            }
-
-            // Se houver colisão, escolhe um novo caminho para o carro inimigo
-            while (collides) {
+            boolean colide = verificaColisao(obstaculo);
+            while (colide) {
                 posX = gerarPosicaoAleatoria();
                 obstaculo.setX(posX);
-                collides = false;
-                for (Obstaculo existingObstaculo : obstaculos) {
-                    if (obstaculo.testaColisao(existingObstaculo)) {
-                        collides = true;
-                        break;
-                    }
-                }
+                colide = verificaColisao(obstaculo);
             }
 
             obstaculos.add(obstaculo);
         }
     }
+
+    private boolean verificaColisao(Obstaculo obstaculo) {
+        for (Obstaculo existingObstaculo : obstaculos) {
+            if (obstaculo.testaColisao(existingObstaculo)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     private int gerarPosicaoAleatoria() {
         int pos = (int) (Math.random() * (LARGURA_ESTRADA / LARGURA_FAIXA_ESTRADA));
@@ -105,25 +133,37 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         return posX;
     }
 
+    public void pararMusica() {
+        // Para a reprodução da música
+        if (musica != null && musica.isRunning()) {
+            musica.stop();
+            musica.close();
+        }
+    }
+
     private void update() {
         if (!gameOver) {
             carro.move();
 
             if (pontuacao == 10 && checkPoint10) {
+                beep.loop(1);
                 velocidadeOponente += 1;
                 checkPoint10 = false;
             }
 
             if (pontuacao == 20 && checkPoint20) {
+                beep.loop(1);
                 velocidadeOponente += 1;
                 checkPoint20 = false;
             }
 
             if (pontuacao == 50 && checkPoint50) {
+                beep.loop(1);
                 velocidadeOponente += 1.5;
                 checkPoint50 = false;
             }
             if (pontuacao == 100 && checkPoint100) {
+                beep.loop(1);
                 velocidadeOponente += 2;
                 checkPoint100 = false;
             }
@@ -151,7 +191,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                     break;
                 }
             }
-
+            if(pontuacao > record){
+                record = pontuacao;
+            }
             if (Math.random() < 0.01) {
                 criarObstaculo();
             }
@@ -161,6 +203,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+
         desenhaBackground(g);
         carro.draw(g);
 
@@ -169,6 +212,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
 
         desenhaPontuacao(g);
+
+        if(iniciado){
+            desenhaInicio(g);
+        }
 
         if (gameOver) {
             desenhaMensagemGameOver(g);
@@ -201,12 +248,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         g.setColor(Color.BLACK);
         g.setFont(new Font("Arial", Font.BOLD, 18));
         FontMetrics fontMetrics = g.getFontMetrics();
-        String scoreText = "Score: " + pontuacao;
-        int textWidth = fontMetrics.stringWidth(scoreText);
+        String pontuacaoLabel = "Pontuação: " + pontuacao;
+        String recordLabel = "Record: " + GamePanel.record;
+        int textWidth = fontMetrics.stringWidth(pontuacaoLabel);
         int textHeight = fontMetrics.getHeight();
         int x = LARGURA_PAINEL - textWidth - 40;
         int y = 20 + textHeight;
-        g.drawString(scoreText, x, y);
+        g.drawString(pontuacaoLabel, x, y);
+        g.drawString(recordLabel, x, y + 30);
     }
 
     private void desenhaMensagemGameOver(Graphics g) {
@@ -214,12 +263,31 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         g.setFont(new Font("Arial", Font.BOLD, 24));
         FontMetrics fontMetrics = g.getFontMetrics();
         String gameOverText = "Bateu! Pressione espaço para reiniciar. Seu score: " + pontuacao;
+        String record = "Seu record atual é: " + GamePanel.record;
         int larguraTexto = fontMetrics.stringWidth(gameOverText);
         int alturaTexto = fontMetrics.getHeight();
         int x = (LARGURA_PAINEL - larguraTexto) / 2;
         int y = (ALTURA_PAINEL - alturaTexto) / 2;
         g.drawString(gameOverText, x, y);
+        g.drawString(record, x, y + 50);
     }
+
+    private void desenhaInicio(Graphics g) {
+        BufferedImage imagem = null;
+        try {
+            InputStream inputStream = getClass().getResourceAsStream("/imgs/intro.png");
+            imagem = ImageIO.read(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (imagem != null) {
+            int x = (getWidth() - imagem.getWidth()) / 2;
+            int y = (getHeight() - imagem.getHeight()) / 2;
+            g.drawImage(imagem, x + 5, y, null);
+        }
+    }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -230,6 +298,16 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
+        System.out.println(iniciado);
+        System.out.println(keyCode);
+        if (iniciado && keyCode == KeyEvent.VK_SPACE) {
+            initGame();
+            iniciado = false;
+        }
+
+        if(keyCode == KeyEvent.VK_C){
+            pararMusica();
+        }
 
         if (gameOver && keyCode == KeyEvent.VK_SPACE) {
             // Reinicia o jogo ao pressionar a tecla espaço após o fim do jogo
