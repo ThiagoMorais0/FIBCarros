@@ -115,9 +115,15 @@ public class Obstaculo {
     }
 
     public boolean testaColisao(Obstaculo outro) {
-        return x + LARGURA >= outro.getX() + 10 &&
-                x <= outro.getX()  + 10 + outro.getLARGURA() &&
-                y <= outro.getY()  + 10 + outro.getALTURA() &&
-                y + ALTURA >= outro.getY()  + 10;
+        int xOutro = outro.getX();
+        int yOutro = outro.getY();
+        int larguraOutro = outro.getLARGURA();
+        int alturaOutro = outro.getALTURA();
+
+        return x + LARGURA > xOutro && // Verifica se há colisão pela esquerda
+                x < xOutro + larguraOutro && // Verifica se há colisão pela direita
+                y < yOutro + alturaOutro && // Verifica se há colisão por cima
+                y + ALTURA > yOutro; // Verifica se há colisão por baixo
     }
+
 }

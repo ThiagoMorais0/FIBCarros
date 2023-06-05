@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import javax.swing.Timer;
 
@@ -85,6 +86,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         carro = new Carro(X_INICIAL_CARRO, Y_INICIAL_CARRO);
         obstaculos = new ArrayList<>();
         pontuacao = 0;
+        velocidadeOponente = 5.0;
 
         try {
             InputStream backgroundInputStream = getClass().getResourceAsStream("/imgs/background.png");
@@ -97,10 +99,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     }
 
     private void criarObstaculo() {
-        if (obstaculos.size() < 5 && !iniciado) {
+        if (obstaculos.size() < 7 && !iniciado) {
             int posX = gerarPosicaoAleatoria();
             Obstaculo obstaculo = new Obstaculo(posX, -ALTURA_CARRO);
 
+            //Verifica se o carro vai aparecer em cima de algum que já existe, se sim, a posição x é gerada novamente.
             boolean colide = verificaColisao(obstaculo);
             while (colide) {
                 posX = gerarPosicaoAleatoria();
@@ -153,13 +156,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
             if (pontuacao == 20 && checkPoint20) {
                 beep.loop(1);
-                velocidadeOponente += 1;
+                velocidadeOponente += 2;
                 checkPoint20 = false;
             }
 
             if (pontuacao == 50 && checkPoint50) {
                 beep.loop(1);
-                velocidadeOponente += 1.5;
+                velocidadeOponente += 2;
                 checkPoint50 = false;
             }
             if (pontuacao == 100 && checkPoint100) {
@@ -174,15 +177,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 carro.setX(X_INICIAL_ESTRADA + LARGURA_ESTRADA - LARGURA_CARRO);
             }
 
-            for (Obstaculo obstaculo : obstaculos) {
+            Iterator<Obstaculo> iterator = obstaculos.iterator();
+            while (iterator.hasNext()) {
+                Obstaculo obstaculo = iterator.next();
                 obstaculo.setY(obstaculo.getY() + (int) velocidadeOponente);
 
                 if (obstaculo.getY() > ALTURA_PAINEL) {
-                    obstaculo.setY(-ALTURA_CARRO);
-                    obstaculo.setX(gerarPosicaoAleatoria());
+                    iterator.remove();
                     pontuacao++;
-
-
                 }
 
                 if (carro.testaColisao(obstaculo)) {
@@ -191,10 +193,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                     break;
                 }
             }
+
             if(pontuacao > record){
                 record = pontuacao;
             }
-            if (Math.random() < 0.01) {
+            if (Math.random() < 0.04) {
                 criarObstaculo();
             }
         }
