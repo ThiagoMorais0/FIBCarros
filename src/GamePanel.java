@@ -298,8 +298,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
-        System.out.println(iniciado);
-        System.out.println(keyCode);
         if (iniciado && keyCode == KeyEvent.VK_SPACE) {
             initGame();
             iniciado = false;
