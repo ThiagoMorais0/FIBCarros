@@ -7,7 +7,7 @@ import java.io.InputStream;
 public class Carro {
     private static final int LARGURA = 50;
     private static final int ALTURA = 100;
-    private static final int VELOCIDADE = 10;
+    private static final int VELOCIDADE = 8;
     private BufferedImage carImage;
 
     private int x;
