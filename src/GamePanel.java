@@ -255,10 +255,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 deslocamentoInicial += ALTURA_ESTRADA;
             }
 
-            if (YEstrada > 0) {
-                // Desenha a imagem de fundo novamente para preencher a parte inferior da tela
-                g.drawImage(backgroundImage, 0, deslocamentoInicial - ALTURA_ESTRADA, null);
-            }
         } else {
             g.drawImage(backgroundImage, 0, Y_INICIAL_ESTRADA, null);
         }
