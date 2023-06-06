@@ -188,6 +188,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 carro.setX(X_INICIAL_ESTRADA + LARGURA_ESTRADA - LARGURA_CARRO);
             }
 
+            if(carro.getY() < Y_INICIAL_ESTRADA){
+                carro.setY(Y_INICIAL_ESTRADA);
+            } else if(carro.getY() > Y_INICIAL_ESTRADA + ALTURA_ESTRADA - (ALTURA_CARRO + 50)){
+                carro.setY(Y_INICIAL_ESTRADA + ALTURA_ESTRADA - (ALTURA_CARRO + 50));
+            }
+
             Iterator<Obstaculo> iterator = obstaculos.iterator();
             while (iterator.hasNext()) {
                 Obstaculo obstaculo = iterator.next();
@@ -314,7 +320,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         if (imagemBatida != null) {
             int x = carro.getX();
-            int y = 410;
+            int y = carro.getY() - 20;
             g.drawImage(imagemBatida, x, y, null);
         }
 
@@ -356,6 +362,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 carro.setMovendoParaEsquerda(true);
             } else if (keyCode == KeyEvent.VK_RIGHT) {
                 carro.setMovendoParaDireita(true);
+            } else if(keyCode == KeyEvent.VK_UP){
+                carro.setMovendoParaFrente(true);
+            } else if(keyCode == KeyEvent.VK_DOWN){
+                carro.setMovendoParaTras(true);
             }
         }
     }
@@ -373,6 +383,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 carro.setMovendoParaEsquerda(false);
             } else if (keyCode == KeyEvent.VK_RIGHT) {
                 carro.setMovendoParaDireita(false);
+            }else if(keyCode == KeyEvent.VK_UP){
+                carro.setMovendoParaFrente(false);
+            } else if(keyCode == KeyEvent.VK_DOWN){
+                carro.setMovendoParaTras(false);
             }
         }
     }

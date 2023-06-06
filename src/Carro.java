@@ -14,6 +14,8 @@ public class Carro {
     private int y;
     private boolean movendoParaEsquerda;
     private boolean movendoParaDireita;
+    private boolean movendoParaFrente;
+    private boolean movendoParaTras;
 
     public Carro(int x, int y) {
         this.x = x;
@@ -37,12 +39,28 @@ public class Carro {
         this.movendoParaDireita = movendoParaDireita;
     }
 
+    public void setMovendoParaFrente(boolean movendoParaFrente) {
+        this.movendoParaFrente = movendoParaFrente;
+    }
+
+    public void setMovendoParaTras(boolean movendoParaTras) {
+        this.movendoParaTras = movendoParaTras;
+    }
+
+
+
     public void move() {
         if (movendoParaEsquerda) {
             x -= VELOCIDADE;
         }
         if (movendoParaDireita) {
             x += VELOCIDADE;
+        }
+        if(movendoParaFrente){
+            y -= VELOCIDADE / 2;
+        }
+        if(movendoParaTras){
+            y += VELOCIDADE / 2;
         }
     }
 
@@ -59,6 +77,14 @@ public class Carro {
 
     public int getX() {
         return x;
+    }
+
+    public int getY(){
+        return y;
+    }
+
+    public void setY(int y){
+        this.y = y;
     }
 
     public void setX(int x) {
