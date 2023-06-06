@@ -46,8 +46,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private int pontuacao;
     private boolean gameOver;
     private boolean iniciado;
+    private boolean naoBateu;
     private Clip musica;
     private Clip beep;
+    private Clip somBatida;
 
     public GamePanel() {
         setPreferredSize(new Dimension(LARGURA_PAINEL, ALTURA_PAINEL));
@@ -77,6 +79,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             e.printStackTrace();
         }
 
+        try {
+            URL somURL = getClass().getResource("/audio/crash.wav");
+            somBatida = AudioSystem.getClip();
+            somBatida.open(AudioSystem.getAudioInputStream(somURL));
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
+
         if (musica != null) {
             musica.loop(Clip.LOOP_CONTINUOUSLY);
         }
@@ -87,6 +97,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         obstaculos = new ArrayList<>();
         pontuacao = 0;
         velocidadeOponente = 5.0;
+        naoBateu = true;
 
         try {
             InputStream backgroundInputStream = getClass().getResourceAsStream("/imgs/background.png");
@@ -221,6 +232,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
 
         if (gameOver) {
+            bateu(g);
             desenhaMensagemGameOver(g);
         }
     }
@@ -289,6 +301,29 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             int y = (getHeight() - imagem.getHeight()) / 2;
             g.drawImage(imagem, x + 5, y, null);
         }
+    }
+
+    private void bateu(Graphics g){
+        BufferedImage imagemBatida = null;
+        try {
+            InputStream inputStream = getClass().getResourceAsStream("/imgs/bateu.png");
+            imagemBatida = ImageIO.read(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (imagemBatida != null) {
+            int x = carro.getX();
+            int y = 410;
+            g.drawImage(imagemBatida, x, y, null);
+        }
+
+        if(naoBateu){
+            somBatida.loop(1);
+            naoBateu = false;
+        }
+
+
     }
 
 
